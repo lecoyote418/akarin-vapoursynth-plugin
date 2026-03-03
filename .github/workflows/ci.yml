@@ -10,35 +10,36 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-macos:
+    runs-on: macos-14   # Apple Silicon runner
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-26]
-        llvm: [19, 20, 21]
-    name: Build os=${{ matrix.os }} llvm=${{ matrix.llvm }}
-    runs-on: ${{ matrix.os }}
+        buildtype: [release]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install meson ninja llvm libxml2 zlib vapoursynth
 
-      - name: Set up Nix cache
-        uses: cachix/cachix-action@v16
-        with:
-          name: vs-nix-overlay
+      - name: Configure
+        run: |
+          meson setup builddir \
+            --buildtype ${{ matrix.buildtype }} \
+            --default-library=shared
 
       - name: Build
-        run: nix build -L .#llvm_${{ matrix.llvm }}
-      - name: Upload artifact
+        run: meson compile -C builddir
+
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: akarin-${{ matrix.os }}-llvm${{ matrix.llvm }}
-          path: result
+          name: akarin-macos-arm64
+          path: builddir/libakarin.dylib
   # build-windows:
   #   runs-on: windows-latest
   #   permissions:
