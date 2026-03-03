@@ -23,7 +23,6 @@
 #include <charconv>
 #include <cmath>
 #include <cctype>
-#include <cstdlib>
 #include <clocale>
 #include <functional>
 #include <limits>
@@ -378,7 +377,7 @@ ExprOp decodeToken(const std::string &token, bool extended = false)
             return { ExprOpType::CONSTANTF, (float)l };
         }
 
-        auto resultf = f = std::strtof(token.c_str(), nullptr);
+        auto resultf = std::from_chars(token.c_str(), token.c_str() + len, f);
         if (resultf.ec == std::errc()) {
             pos = std::distance(token.c_str(), resultf.ptr);
         }
