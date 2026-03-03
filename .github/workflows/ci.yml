@@ -20,14 +20,14 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install meson ninja llvm@20 libxml2 zlib vapoursynth
+          brew install meson ninja llvm@19 libxml2 zlib vapoursynth
 
-      - name: Configure environment for LLVM 20
+      - name: Configure environment for LLVM 19
         run: |
-          echo "/opt/homebrew/opt/llvm@20/bin" >> $GITHUB_PATH
-          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@20/lib" >> $GITHUB_ENV
-          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@20/include" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@20/lib/pkgconfig" >> $GITHUB_ENV
+          echo "/opt/homebrew/opt/llvm@19/bin" >> $GITHUB_PATH
+          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@19/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@19/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@19/lib/pkgconfig" >> $GITHUB_ENV
 
       - name: Configure build
         run: |
