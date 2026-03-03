@@ -10,41 +10,44 @@ permissions:
   contents: read
 
 jobs:
-  build-macos:
+  build-macos-arm64:
     runs-on: macos-14   # Apple Silicon runner
-    strategy:
-      fail-fast: false
-      matrix:
-        buildtype: [release]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
+
       - name: Install dependencies
         run: |
           brew update
-          brew install meson ninja llvm libxml2 zlib vapoursynth
-      
-      - name: Add LLVM to PATH
-        run: |
-          echo "/opt/homebrew/opt/llvm/bin" >> $GITHUB_PATH
-          echo "LDFLAGS=-L/opt/homebrew/opt/llvm/lib" >> $GITHUB_ENV
-          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm/include" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm/lib/pkgconfig" >> $GITHUB_ENV
+          brew install meson ninja llvm@21 libxml2 zlib vapoursynth
 
-      - name: Configure
+      - name: Configure environment for LLVM 21
+        run: |
+          echo "/opt/homebrew/opt/llvm@21/bin" >> $GITHUB_PATH
+          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@21/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@21/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@21/lib/pkgconfig" >> $GITHUB_ENV
+
+      - name: Configure build
         run: |
           meson setup builddir \
             --buildtype release \
             --default-library=shared
-            - name: Build
-              run: meson compile -C builddir
-      
-            - name: Upload
-              uses: actions/upload-artifact@v4
-              with:
-                name: akarin-macos-arm64
-                path: builddir/libakarin.dylib
+
+      - name: Build
+        run: meson compile -C builddir
+
+      - name: Verify architecture
+        run: |
+          file builddir/libakarin.dylib
+          otool -L builddir/libakarin.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: akarin-macos-arm64
+          path: builddir/libakarin.dylib
   # build-windows:
   #   runs-on: windows-latest
   #   permissions:
