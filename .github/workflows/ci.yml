@@ -28,6 +28,12 @@ jobs:
           echo "LDFLAGS=-L/opt/homebrew/opt/llvm@19/lib" >> $GITHUB_ENV
           echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@19/include" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@19/lib/pkgconfig" >> $GITHUB_ENV
+          
+      - name: Configure build
+        run: |
+          meson setup builddir \
+            --buildtype release \
+            --default-library=shared
 
       - name: Build
         run: meson compile -C builddir
