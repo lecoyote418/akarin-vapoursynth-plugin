@@ -22,12 +22,12 @@ jobs:
           brew update
           brew install meson ninja llvm@19 libxml2 zlib vapoursynth zstd
 
-      - name: Configure environment for LLVM 19
+      - name: Configure environment for LLVM19 and zstd
         run: |
           echo "/opt/homebrew/opt/llvm@19/bin" >> $GITHUB_PATH
-          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@19/lib" >> $GITHUB_ENV
-          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@19/include" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@19/lib/pkgconfig" >> $GITHUB_ENV
+          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@19/lib -L/opt/homebrew/opt/zstd/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@19/include -I/opt/homebrew/opt/zstd/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@19/lib/pkgconfig:/opt/homebrew/opt/zstd/lib/pkgconfig" >> $GITHUB_ENV
           
       - name: Configure build
         run: |
