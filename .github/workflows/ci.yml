@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install meson ninja llvm@17 libxml2 zlib vapoursynth@72
+          brew install meson ninja llvm@17 libxml2 zlib
 
       - name: Configure environment for LLVM 17
         run: |
@@ -28,12 +28,16 @@ jobs:
           echo "LDFLAGS=-L/opt/homebrew/opt/llvm@17/lib" >> $GITHUB_ENV
           echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@17/include" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@17/lib/pkgconfig" >> $GITHUB_ENV
-
-      - name: Configure build
+          
+      - name: Install VapourSynth R60
         run: |
-          meson setup builddir \
-            --buildtype release \
-            --default-library=shared
+          curl -L -o vs.pkg https://github.com/vapoursynth/vapoursynth/releases/download/R60/VapourSynth-R60-macos-arm64.pkg
+          sudo installer -pkg vs.pkg -target /
+            - name: Configure build
+              run: |
+                meson setup builddir \
+                  --buildtype release \
+                  --default-library=shared
 
       - name: Build
         run: meson compile -C builddir
