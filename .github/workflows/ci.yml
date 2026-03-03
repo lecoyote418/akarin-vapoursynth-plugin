@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-macos-arm64:
-    runs-on: macos-14   # Apple Silicon runner
+    runs-on: macos-26   # Apple Silicon runner
 
     steps:
       - name: Checkout code
@@ -20,24 +20,14 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install meson ninja llvm@17 libxml2 zlib
+          brew install meson ninja llvm@19 libxml2 zlib vapoursynth
 
-      - name: Configure environment for LLVM 17
+      - name: Configure environment for LLVM 19
         run: |
-          echo "/opt/homebrew/opt/llvm@17/bin" >> $GITHUB_PATH
-          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@17/lib" >> $GITHUB_ENV
-          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@17/include" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@17/lib/pkgconfig" >> $GITHUB_ENV
-          
-      - name: Install VapourSynth R60
-        run: |
-          curl -L -o vs.pkg https://github.com/vapoursynth/vapoursynth/releases/download/R60/VapourSynth-R60-macos-arm64.pkg
-          sudo installer -pkg vs.pkg -target /
-            - name: Configure build
-              run: |
-                meson setup builddir \
-                  --buildtype release \
-                  --default-library=shared
+          echo "/opt/homebrew/opt/llvm@19/bin" >> $GITHUB_PATH
+          echo "LDFLAGS=-L/opt/homebrew/opt/llvm@19/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/llvm@19/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/llvm@19/lib/pkgconfig" >> $GITHUB_ENV
 
       - name: Build
         run: meson compile -C builddir
