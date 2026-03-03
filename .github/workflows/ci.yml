@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
-          brew install meson ninja llvm@19 libxml2 zlib vapoursynth
+          brew install meson ninja llvm@19 libxml2 zlib vapoursynth zstd
 
       - name: Configure environment for LLVM 19
         run: |
